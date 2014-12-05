@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ScrimInsetsView">
+        <attr name="insetForeground" format="reference|color" />
+    </declare-styleable>
+
+    <declare-styleable name="FloatingActionButton">
+        <attr name="type" format="enum">
+            <enum name="mini" value="1"/>
+            <enum name="normal" value="0"/>
+        </attr>
+        <attr name="shadow" format="boolean"/>
+        <attr name="colorPressed" format="color"/>
+        <attr name="colorNormal" format="color"/>
+        <attr name="colorRipple" format="color"/>
+
+    </declare-styleable>
+
+</resources>
