@@ -35,6 +35,10 @@
         <!--
         Floating Action Button goes here.
         -->
+        <liu.brandon.workouts.UI.FloatingActionButton
+            android:layout_width="flo"
+            android:layout_height="" />
+
 
     </LinearLayout>
 

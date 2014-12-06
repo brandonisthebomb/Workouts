@@ -3,4 +3,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="fab_type_normal">56dp</dimen>
+    <dimen name="fab_type_mini">40dp</dimen>
+    <dimen name="fab_shadow_size">12dp</dimen>
+    <dimen name="fab_elevation_lollipop">8dp</dimen>
+
 </resources>

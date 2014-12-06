@@ -1,13 +1,18 @@
 package liu.brandon.workouts.UI;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.os.Build;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.widget.ImageButton;
 
 import liu.brandon.workouts.R;
@@ -52,11 +57,22 @@ public class FloatingActionButton extends ImageButton {
         initBackground();
     }
 
+    @TargetApi(21)
     private void initBackground() {
         StateListDrawable drawable = new StateListDrawable();
         drawable.addState(new int[]{android.R.attr.state_pressed}, createDrawable(mColorPressed));
         drawable.addState(new int[]{}, createDrawable(mColorNormal));
-        if (currentapiVersion == android.os.Build.)
+        if (currentapiVersion == Build.VERSION_CODES.LOLLIPOP){
+            setElevation(R.dimen.fab_elevation_lollipop);
+            setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    int size = getResources().getDimensionPixelSize(mType == TYPE_NORMAL ? R.dimen.fab_type_normal : R.dimen.fab_type_mini);
+                    outline.setOval(0, 0, size, size);
+                }
+            });
+
+        }
     }
 
     private Drawable createDrawable(int color) {
