@@ -14,6 +14,8 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -22,6 +24,8 @@ import android.widget.Toolbar;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
+import liu.brandon.workouts.UI.FloatingActionButton;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -107,20 +111,23 @@ public class MainActivity extends ActionBarActivity {
         super.onBackPressed();
     }
 
-    public void actionButtonPressed(View view){
-        Log.d(TAG, "actionButtonPressed");
-    }
+    /*public void actionButtonPressed(View v) {
+        FloatingActionButton button = (FloatingActionButton)v;
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotation);
+        button.startAnimation(animation);
+        }*/
 
-    private void updateListOrder(){
+
+private void updateListOrder(){
         mCurrentDay = getCurrentDay();
 
-    }
+        }
 
-    private String getCurrentDay(){
+private String getCurrentDay(){
         //Get the day of the week in String format.
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
         Calendar calendar = Calendar.getInstance();
         return dayFormat.format(calendar.getTime());
-    }
+        }
 
-}
+        }
