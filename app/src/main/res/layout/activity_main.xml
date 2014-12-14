@@ -22,52 +22,88 @@
                 android:layout_width="match_parent"
                 android:minHeight="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                />
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
 
         </LinearLayout>
 
 
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-
-        <!--
-        Floating Action Button goes here.
-        -->
-        <liu.brandon.workouts.UI.FloatingActionButton
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_content_add"
-            app:colorPressed="@color/pressed"
-            app:colorNormal="@color/accent"
-            app:colorRipple="@color/ripple"
-            />
+            android:layout_gravity="bottom|end">
 
+
+            <liu.brandon.workouts.UI.FloatingActionButton
+                android:id="@+id/main_FAB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_alignParentRight="true"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_exercise"
+                app:colorPressed="@color/pressed"
+                app:colorNormal="@color/accent"
+                app:colorRipple="@color/ripple"
+                app:rotatable="false"
+                />
+
+        </RelativeLayout>
 
     </LinearLayout>
 
-    <liu.brandon.workouts.ScrimInsetsFrameLayout
+    <liu.brandon.workouts.UI.ScrimInsetsFrameLayout
         android:id="@+id/left_drawer"
         android:layout_width="304dp"
         android:layout_height="match_parent"
         android:layout_gravity="left|start"
         android:fitsSystemWindows="true"
+        android:background="@color/grey_white_1000"
         app:insetForeground="#4000">
 
-
-
-        <ListView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:choiceMode="singleChoice"
-            android:divider="@android:color/background_dark"
-            android:dividerHeight="1dp" />
+            android:layout_height="match_parent">
 
-    </liu.brandon.workouts.ScrimInsetsFrameLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="100dp"
+                        android:layout_alignParentTop="true"
+                        android:src="@drawable/drawer_bezel"
+                        android:scaleType="centerCrop"/>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Workouts"
+                    android:textColor="@color/grey_white_1000"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="65dp"
+                    android:layout_marginLeft="17dp"
+                    android:textSize="18dp"/>
+            </FrameLayout>
+
+            <ListView
+                android:id="@+id/drawer_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></ListView>
+
+        </LinearLayout>
+
+
+
+    </liu.brandon.workouts.UI.ScrimInsetsFrameLayout>
 
 
 </android.support.v4.widget.DrawerLayout>

@@ -1,31 +1,20 @@
 package liu.brandon.workouts;
 
-import android.app.Activity;
-import android.app.ListActivity;
 import android.content.res.Configuration;
-import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.Toolbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
 import liu.brandon.workouts.UI.FloatingActionButton;
+import liu.brandon.workouts.UI.ScrimInsetsFrameLayout;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -36,7 +25,7 @@ public class MainActivity extends ActionBarActivity {
     private android.support.v7.widget.Toolbar mToolbar;
     private android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
 
-    private String mCurrentDay;
+    private FloatingActionButton mMainButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +40,14 @@ public class MainActivity extends ActionBarActivity {
         mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.app_name, R.string.app_name);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        mMainButton = (FloatingActionButton)findViewById(R.id.main_FAB);
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
             ScrimInsetsFrameLayout mLayout = (ScrimInsetsFrameLayout)findViewById(R.id.left_drawer);
             mLayout.setElevation(30);
         }
-
-        updateListOrder();
-
     }
 
 
@@ -111,23 +99,4 @@ public class MainActivity extends ActionBarActivity {
         super.onBackPressed();
     }
 
-    /*public void actionButtonPressed(View v) {
-        FloatingActionButton button = (FloatingActionButton)v;
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotation);
-        button.startAnimation(animation);
-        }*/
-
-
-private void updateListOrder(){
-        mCurrentDay = getCurrentDay();
-
-        }
-
-private String getCurrentDay(){
-        //Get the day of the week in String format.
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
-        Calendar calendar = Calendar.getInstance();
-        return dayFormat.format(calendar.getTime());
-        }
-
-        }
+}

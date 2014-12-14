@@ -1,4 +1,4 @@
-package liu.brandon.workouts;
+package liu.brandon.workouts.UI;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+
+import liu.brandon.workouts.R;
 
 /**
  * Created by Brandon on 11/28/14.
