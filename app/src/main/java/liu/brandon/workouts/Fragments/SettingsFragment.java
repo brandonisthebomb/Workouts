@@ -1,4 +1,4 @@
-package liu.brandon.workouts.UI;
+package liu.brandon.workouts.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,12 +12,13 @@ import liu.brandon.workouts.R;
 /**
  * Created by Brandon on 12/13/14.
  */
-public class HomeFragment extends ListFragment{
+public class SettingsFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        return inflater.inflate(R.layout.fragment_settings, container, false);
     }
+
 
 
 

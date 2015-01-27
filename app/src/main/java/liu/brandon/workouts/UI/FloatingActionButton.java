@@ -46,6 +46,7 @@ public class FloatingActionButton extends ImageButton {
     private boolean mClicked = false;
     private boolean mRotatable;
     private boolean mMarginsSet;
+    private boolean mExpanded = false;
 
     private static final int ANIMATION_DURATION = 300;
     private static final float COLLAPSED_PLUS_ROTATION = 0f;
@@ -54,6 +55,7 @@ public class FloatingActionButton extends ImageButton {
     private AnimatorSet mExpandAnimation = new AnimatorSet().setDuration(ANIMATION_DURATION);
     private AnimatorSet mCollapseAnimation = new AnimatorSet().setDuration(ANIMATION_DURATION);
 
+    private StateListDrawable mDrawable;
 
     private RippleDrawable mRippleDrawable;
 
@@ -89,9 +91,38 @@ public class FloatingActionButton extends ImageButton {
     @SuppressWarnings("deprecation")
     @TargetApi(21)
     private void initBackground() {
+        mDrawable = new StateListDrawable();
+        mDrawable.addState(new int[]{android.R.attr.state_pressed}, createDrawable(mColorPressed));
+        mDrawable.addState(new int[]{}, createDrawable(mColorNormal));
+        if (currentapiVersion >= Build.VERSION_CODES.LOLLIPOP){
+            setElevation(getResources().getDimension(R.dimen.fab_elevation_lollipop));
+            setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    int size = getResources().getDimensionPixelSize(mType == TYPE_NORMAL ? R.dimen.fab_type_normal : R.dimen.fab_type_mini);
+                    outline.setOval(0, 0, size, size);
+                }
+            });
+
+            mRippleDrawable = new RippleDrawable(new ColorStateList(new int[][]{{}},
+                    new int[]{mColorRipple}), mDrawable, null);
+            setClipToOutline(true);
+            setBackground(mRippleDrawable);
+        }
+        else if (currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN){
+            setBackground(mDrawable);
+        }
+        else{
+            setBackgroundDrawable(mDrawable);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    @TargetApi(21)
+    public Drawable getRoundedDrawable(int colorNormal, int colorPressed){
         StateListDrawable drawable = new StateListDrawable();
-        drawable.addState(new int[]{android.R.attr.state_pressed}, createDrawable(mColorPressed));
-        drawable.addState(new int[]{}, createDrawable(mColorNormal));
+        drawable.addState(new int[]{android.R.attr.state_pressed}, createDrawable(colorPressed));
+        drawable.addState(new int[]{}, createDrawable(colorNormal));
         if (currentapiVersion >= Build.VERSION_CODES.LOLLIPOP){
             setElevation(getResources().getDimension(R.dimen.fab_elevation_lollipop));
             setOutlineProvider(new ViewOutlineProvider() {
@@ -105,13 +136,10 @@ public class FloatingActionButton extends ImageButton {
             mRippleDrawable = new RippleDrawable(new ColorStateList(new int[][]{{}},
                     new int[]{mColorRipple}), drawable, null);
             setClipToOutline(true);
-            setBackground(mRippleDrawable);
-        }
-        else if (currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN){
-            setBackground(drawable);
+            return mRippleDrawable;
         }
         else{
-            setBackgroundDrawable(drawable);
+            return drawable;
         }
     }
 
@@ -168,6 +196,31 @@ public class FloatingActionButton extends ImageButton {
                 }
             }
         });
+    }
+
+    public void runAnimation(boolean expanded){
+        final OvershootInterpolator interpolator = new OvershootInterpolator();
+
+        final ObjectAnimator collapseAnimator = ObjectAnimator.ofFloat(this, "rotation", EXPANDED_PLUS_ROTATION, COLLAPSED_PLUS_ROTATION);
+        final ObjectAnimator expandAnimator = ObjectAnimator.ofFloat(this, "rotation", COLLAPSED_PLUS_ROTATION, EXPANDED_PLUS_ROTATION);
+
+        collapseAnimator.setInterpolator(interpolator);
+        expandAnimator.setInterpolator(interpolator);
+
+        mExpandAnimation.play(expandAnimator);
+        mCollapseAnimation.play(collapseAnimator);
+
+
+        if(expanded){
+            mExpandAnimation.cancel();
+            mCollapseAnimation.start();
+        }
+        else{
+            mCollapseAnimation.cancel();
+            mExpandAnimation.start();
+
+        }
+
     }
 
     private void setMarginsWithoutShadow() {

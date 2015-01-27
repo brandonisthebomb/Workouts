@@ -4,4 +4,15 @@
     <string name="app_name">Workouts</string>
     <string name="action_settings">Settings</string>
 
+    <string-array name="drawer_list">
+        <item>Home</item>
+        <item>Routines</item>
+        <item>Exercises</item>
+        <item>Settings</item>
+        <item>About</item>
+    </string-array>
+
+    <string name="title_activity_exercise">ExerciseActivity</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>
