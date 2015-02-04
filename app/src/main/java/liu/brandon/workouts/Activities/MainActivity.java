@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,8 +21,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Xml;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,7 +37,11 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Attr;
+import org.xmlpull.v1.XmlPullParser;
 
 import liu.brandon.workouts.Adapters.IconAdapter;
 import liu.brandon.workouts.R;
@@ -52,6 +60,7 @@ public class MainActivity extends ActionBarActivity {
     private final static int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 
     private Context mContext;
+    private RelativeLayout mContainer;
 
     private IconAdapter mIconAdapter;
     private DrawerLayout mDrawerLayout;
@@ -68,10 +77,9 @@ public class MainActivity extends ActionBarActivity {
     private boolean isStart = false;
     private ValueAnimator mBarAnimator;
     private ValueAnimator mStatusAnimator;
-    private ValueAnimator mButtonAnimator;
 
-    private boolean hasWorkedOut = false;
     private boolean isExpanded = false;
+    private boolean hasWorkedOut = false;
     private int daysElapsed;
 
 
@@ -81,6 +89,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         mContext = this;
+        mContainer = (RelativeLayout)findViewById(R.id.main_button_container);
 
         initToolbar();
         initFragments();
@@ -161,71 +170,22 @@ public class MainActivity extends ActionBarActivity {
         android.support.v7.app.ActionBar bar = getSupportActionBar();
         bar.setTitle("Start");
 
-        doAnimations();
+        startAnimations();
         toggleDrawer();
     }
 
-
-    @SuppressWarnings("deprecation")
-    @TargetApi(21)
     private void addWorkout(){
 
-        mMainButton.runAnimation(isExpanded);
-
-        if(isExpanded) {
-            isExpanded = false;
-            final Integer colorFinal = getResources().getColor(R.color.accent);
-            final Integer colorStart = getResources().getColor(R.color.red_600);
-
-            ValueAnimator buttonAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorStart, colorFinal);
-            buttonAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-                @Override
-                public void onAnimationUpdate(ValueAnimator animator) {
-
-                    if (currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN) {
-                        mMainButton.setBackground(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.pressed)));
-                    }
-                    else{
-                        mMainButton.setBackgroundDrawable(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.pressed)));
-                    }
-
-                }
-            });
-            buttonAnimation.start();
-
-        }
-        else {
-            isExpanded = true;
-
-            final Integer colorStart = getResources().getColor(R.color.accent);
-            final Integer colorFinal = getResources().getColor(R.color.red_600);
-
-            ValueAnimator buttonAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorStart, colorFinal);
-            buttonAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-                @Override
-                public void onAnimationUpdate(ValueAnimator animator) {
-
-                    if (currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN) {
-                        mMainButton.setBackground(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.red_300)));
-                    }
-                    else{
-                        mMainButton.setBackgroundDrawable(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.red_300)));
-                    }
-
-                }
-            });
-            mButtonAnimator = buttonAnimation;
-            buttonAnimation.start();
-
-        }
+        if(isExpanded)
+            collapseAnimations();
+        else
+            expansionAnimations();
 
     }
 
     @SuppressWarnings("deprecation")
     @TargetApi(21)
-    private void doAnimations(){
+    private void startAnimations(){
 
         Integer colorInit = getResources().getColor(R.color.primary);
         Integer colorFinal = getResources().getColor(R.color.blue_grey_600);
@@ -263,6 +223,73 @@ public class MainActivity extends ActionBarActivity {
         mMainButton.setImageResource(R.drawable.ic_content_add);
     }
 
+    @SuppressWarnings("deprecation")
+    @TargetApi(21)
+    private void expansionAnimations(){
+        mMainButton.runAnimation(isExpanded);
+        isExpanded = true;
+
+        final Integer colorStart = getResources().getColor(R.color.accent);
+        final Integer colorFinal = getResources().getColor(R.color.red_600);
+
+        ValueAnimator buttonAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorStart, colorFinal);
+        buttonAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+
+                if (currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mMainButton.setBackground(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.red_900)));
+                }
+                else{
+                    mMainButton.setBackgroundDrawable(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.red_900)));
+                }
+
+            }
+        });
+        buttonAnimation.start();
+
+        XmlPullParser parser = getResources().getLayout(R.layout.fab_expanded);
+        AttributeSet attributes = Xml.asAttributeSet(parser);
+
+        FloatingActionButton exerciseButton = new FloatingActionButton(mContext, attributes);
+        FloatingActionButton routineButton = new FloatingActionButton(mContext, attributes);
+
+        //exerciseButton.setLayoutParams;
+
+        //mContainer.addView(exerciseButton);
+        //mContainer.addView(routineButton);
+
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @TargetApi(21)
+    private void collapseAnimations() {
+        mMainButton.runAnimation(isExpanded);
+        isExpanded = false;
+        final Integer colorFinal = getResources().getColor(R.color.accent);
+        final Integer colorStart = getResources().getColor(R.color.red_600);
+
+        ValueAnimator buttonAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorStart, colorFinal);
+        buttonAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+
+                if (currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mMainButton.setBackground(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.pressed)));
+                }
+                else{
+                    mMainButton.setBackgroundDrawable(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.pressed)));
+                }
+
+            }
+        });
+        buttonAnimation.start();
+    }
+
+
     private void toggleDrawer(){
         if (isStart){
             mDrawerToggle.setDrawerIndicatorEnabled(false);
@@ -276,7 +303,6 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-
     @Override
     public void onBackPressed(){
         Log.d(TAG, "onBackPressed, isStart = " + String.valueOf(isStart));
@@ -286,9 +312,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         if(isExpanded){
-            mMainButton.runAnimation(isExpanded);
-            mButtonAnimator.reverse();
-            isExpanded = false;
+            collapseAnimations();
             return;
         }
 
@@ -349,7 +373,6 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -384,7 +407,6 @@ public class MainActivity extends ActionBarActivity {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
-
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

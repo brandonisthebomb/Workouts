@@ -43,10 +43,7 @@ public class FloatingActionButton extends ImageButton {
     private int mColorPressed;
     private int mColorRipple;
 
-    private boolean mClicked = false;
-    private boolean mRotatable;
     private boolean mMarginsSet;
-    private boolean mExpanded = false;
 
     private static final int ANIMATION_DURATION = 300;
     private static final float COLLAPSED_PLUS_ROTATION = 0f;
@@ -76,15 +73,11 @@ public class FloatingActionButton extends ImageButton {
             mColorPressed = a.getColor(R.styleable.FloatingActionButton_colorPressed, R.color.grey_white_1000);
             mColorRipple = a.getColor(R.styleable.FloatingActionButton_colorRipple, R.color.grey_white_1000);
             mType = a.getInt(R.styleable.FloatingActionButton_type, TYPE_NORMAL);
-            mRotatable = a.getBoolean(R.styleable.FloatingActionButton_rotatable, false);
         } finally {
             a.recycle();
         }
 
         initBackground();
-
-        if(mRotatable)
-            animateView();
 
     }
 
@@ -167,35 +160,6 @@ public class FloatingActionButton extends ImageButton {
             setMarginsWithoutShadow();
         }
         setMeasuredDimension(size, size);
-    }
-
-    private void animateView(){
-        final OvershootInterpolator interpolator = new OvershootInterpolator();
-
-        final ObjectAnimator collapseAnimator = ObjectAnimator.ofFloat(this, "rotation", EXPANDED_PLUS_ROTATION, COLLAPSED_PLUS_ROTATION);
-        final ObjectAnimator expandAnimator = ObjectAnimator.ofFloat(this, "rotation", COLLAPSED_PLUS_ROTATION, EXPANDED_PLUS_ROTATION);
-
-        collapseAnimator.setInterpolator(interpolator);
-        expandAnimator.setInterpolator(interpolator);
-
-        mExpandAnimation.play(expandAnimator);
-        mCollapseAnimation.play(collapseAnimator);
-
-        this.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mClicked == true){
-                    mClicked = false;
-                    mExpandAnimation.cancel();
-                    mCollapseAnimation.start();
-                }
-                else {
-                    mClicked = true;
-                    mCollapseAnimation.cancel();
-                    mExpandAnimation.start();
-                }
-            }
-        });
     }
 
     public void runAnimation(boolean expanded){

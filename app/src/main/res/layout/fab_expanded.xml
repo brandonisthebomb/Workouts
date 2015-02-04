@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<liu.brandon.workouts.UI.FloatingActionButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_FAB"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom|end"
+    android:layout_alignParentRight="true"
+    android:layout_margin="16dp"
+    android:src="@drawable/ic_exercise"
+    app:type="mini"
+    app:colorPressed="@color/pressed"
+    app:colorNormal="@color/accent"
+    app:colorRipple="@color/ripple">
+
+</liu.brandon.workouts.UI.FloatingActionButton>

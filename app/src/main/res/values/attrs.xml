@@ -13,7 +13,6 @@
         <attr name="colorPressed" format="color"/>
         <attr name="colorNormal" format="color"/>
         <attr name="colorRipple" format="color"/>
-        <attr name="rotatable" format="boolean"/>
 
     </declare-styleable>
 
