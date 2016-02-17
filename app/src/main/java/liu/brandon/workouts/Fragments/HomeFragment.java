@@ -26,6 +26,8 @@ import liu.brandon.workouts.R;
 public class HomeFragment extends Fragment{
 
     private Context mContext;
+    private final static String TAG = "HomeFragment";
+    private final static String URL = "http://www.bodybuilding.com/rss/articles";
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -59,18 +61,31 @@ public class HomeFragment extends Fragment{
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Toast.makeText(mContext, "Refreshing", Toast.LENGTH_LONG).show();
+                /*Toast.makeText(mContext, "Refreshing", Toast.LENGTH_LONG).show();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         mSwipeRefreshLayout.setRefreshing(true);
                     }
-                }, 1000);
+                }, 1000); */
+
+                refreshContent();
 
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary_dark, R.color.accent, R.color.primary_dark, R.color.accent);
 
+    }
+
+    private void refreshContent(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //mAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, getNewTweets());
+                //mListView.setAdapter(mAdapter);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }, 0);
     }
 
     private void initList(View view){

@@ -284,5 +284,7 @@
     <color name="ripple">@color/blue_300</color>
     <color name="accent">@color/blue_900</color>
     <color name="pressed">@color/indigo_900</color>
+    <color name="overlay_visible">#90ffffff</color>
+    <color name="overlay_invisible">@android:color/transparent</color>
 
 </resources>

@@ -6,60 +6,150 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:minHeight="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
-
-        </LinearLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <FrameLayout
-                android:id="@+id/fragment_framelayout"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <android.support.v7.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:minHeight="?attr/actionBarSize"
+                        android:background="?attr/colorPrimary"
+                        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
 
-            <RelativeLayout
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/fragment_framelayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/main_button_container"
-                android:layout_gravity="bottom|end">
+                android:layout_height="match_parent"
+                android:id="@+id/overlay"
+                android:background="@color/overlay_invisible"
+                android:visibility="gone"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/floating_action_menu_container"
+                android:orientation="vertical"
+                android:gravity="bottom|end"
+                >
+
+
+                <RelativeLayout
+                    android:id="@+id/routine_button_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="52dp"
+                    android:layout_marginRight="23dp"
+                    android:gravity="right"
+                    android:visibility="gone"
+                    >
+
+                    <TextView
+                        android:id="@+id/routine_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:background="@android:drawable/editbox_background_normal"
+                        android:textColor="@color/grey_800"
+                        android:layout_marginRight="25dp"
+                        android:padding="7dp"
+                        android:paddingRight="10dp"
+                        android:paddingLeft="10dp"
+                        android:elevation="2dp"
+                        android:text="Routine"
+                        android:textStyle="bold"/>
+
+                    <liu.brandon.workouts.UI.FloatingActionButton
+                        android:id="@+id/routine_FAB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/routine_text"
+                        android:src="@drawable/ic_notification_event_note"
+                        app:type="mini"
+                        app:colorNormal="@color/purple_400"
+                        app:colorPressed="@color/purple_800"
+                        app:colorRipple="@color/purple_100"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/exercise_button_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="52dp"
+                    android:layout_marginRight="23dp"
+                    android:gravity="right"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/exercise_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="7dp"
+                        android:layout_centerVertical="true"
+                        android:background="@android:drawable/editbox_background_normal"
+                        android:textColor="@color/grey_800"
+                        android:layout_marginRight="25dp"
+                        android:paddingRight="5dp"
+                        android:paddingLeft="5dp"
+                        android:elevation="2dp"
+                        android:textStyle="bold"
+                        android:text="Exercise"/>
+
+                    <liu.brandon.workouts.UI.FloatingActionButton
+                        android:id="@+id/exercise_FAB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/exercise_text"
+                        android:src="@drawable/ic_exercise_bicep"
+                        app:type="mini"
+                        app:colorPressed="@color/cyan_800"
+                        app:colorNormal="@color/cyan_400"
+                        app:colorRipple="@color/cyan_100"/>
+
+                </RelativeLayout>
 
                 <liu.brandon.workouts.UI.FloatingActionButton
                     android:id="@+id/main_FAB"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|end"
-                    android:layout_alignParentRight="true"
-                    android:layout_margin="16dp"
                     android:src="@drawable/ic_exercise"
+                    android:layout_margin="16dp"
                     app:colorPressed="@color/pressed"
                     app:colorNormal="@color/accent"
                     app:colorRipple="@color/ripple"
                     />
 
-            </RelativeLayout>
+            </LinearLayout>
+
 
         </FrameLayout>
 

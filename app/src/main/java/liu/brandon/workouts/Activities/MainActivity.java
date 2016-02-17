@@ -3,6 +3,7 @@ package liu.brandon.workouts.Activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
+import android.animation.FloatEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
@@ -14,6 +15,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
+import android.opengl.Visibility;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -32,10 +34,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,6 +48,7 @@ import org.w3c.dom.Attr;
 import org.xmlpull.v1.XmlPullParser;
 
 import liu.brandon.workouts.Adapters.IconAdapter;
+import liu.brandon.workouts.Fragments.StartFragment;
 import liu.brandon.workouts.R;
 import liu.brandon.workouts.Fragments.AboutFragment;
 import liu.brandon.workouts.Fragments.ExercisesFragment;
@@ -54,33 +59,40 @@ import liu.brandon.workouts.UI.ScrimInsetsFrameLayout;
 import liu.brandon.workouts.Fragments.SettingsFragment;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity{
 
+    //Activity
     private static final String TAG = "MainActivity";
     private final static int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-
     private Context mContext;
-    private RelativeLayout mContainer;
 
+    //Navigation Drawer
     private IconAdapter mIconAdapter;
     private DrawerLayout mDrawerLayout;
     private android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
 
+    //Fragments
     private FragmentManager mSupportFragmentManager;
     private FrameLayout mFragmentLayout;
     private android.support.v7.widget.Toolbar mToolbar;
-    private FloatingActionButton mMainButton;
-
     private int mCurrentPosition = 0;
 
+    //FAB and Action Menu
+    private LinearLayout mFloatingActionMenuContainer;
+    private RelativeLayout mRoutinesMenuContainer;
+    private RelativeLayout mExercisesMenuContainer;
+    private FloatingActionButton mMainButton;
+    private FloatingActionButton mExercisesButton;
+    private FloatingActionButton mRoutinesButton;
+    private boolean isExpanded = false;
+    private View mOverlay;
+
+    //Start Screen
     private boolean isStart = false;
     private ValueAnimator mBarAnimator;
     private ValueAnimator mStatusAnimator;
 
-    private boolean isExpanded = false;
-    private boolean hasWorkedOut = false;
-    private int daysElapsed;
 
 
     @Override
@@ -89,7 +101,6 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         mContext = this;
-        mContainer = (RelativeLayout)findViewById(R.id.main_button_container);
 
         initToolbar();
         initFragments();
@@ -150,7 +161,14 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initActionButton(){
+        mFloatingActionMenuContainer = (LinearLayout)findViewById(R.id.floating_action_menu_container);
+        mExercisesMenuContainer = (RelativeLayout)findViewById(R.id.exercise_button_container);
+        mRoutinesMenuContainer = (RelativeLayout)findViewById(R.id.routine_button_container);
+
         mMainButton = (FloatingActionButton)findViewById(R.id.main_FAB);
+        mExercisesButton = (FloatingActionButton)findViewById(R.id.exercise_FAB);
+        mRoutinesButton = (FloatingActionButton)findViewById(R.id.routine_FAB);
+
         mMainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,6 +179,17 @@ public class MainActivity extends ActionBarActivity {
                 }
             }
         });
+
+        mOverlay = findViewById(R.id.overlay);
+
+        mExercisesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, AddExerciseActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void initStartScreen(){
@@ -221,6 +250,11 @@ public class MainActivity extends ActionBarActivity {
         }
 
         mMainButton.setImageResource(R.drawable.ic_content_add);
+
+        Fragment startFragment = new StartFragment();
+        FragmentTransaction transaction = mSupportFragmentManager.beginTransaction();
+        transaction.replace(mFragmentLayout.getId(), startFragment);
+        transaction.commit();
     }
 
     @SuppressWarnings("deprecation")
@@ -239,26 +273,48 @@ public class MainActivity extends ActionBarActivity {
             public void onAnimationUpdate(ValueAnimator animator) {
 
                 if (currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN) {
-                    mMainButton.setBackground(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.red_900)));
-                }
-                else{
-                    mMainButton.setBackgroundDrawable(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.red_900)));
+                    mMainButton.setBackground(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.red_900),
+                            getResources().getColor(R.color.red_300)));
+                } else {
+                    mMainButton.setBackgroundDrawable(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.red_900),
+                            getResources().getColor(R.color.red_300)));
                 }
 
             }
         });
+
+
+
+        final Integer overlayVisible = getResources().getColor(R.color.overlay_visible);
+        final Integer overlayInvisible = getResources().getColor(R.color.overlay_invisible);
+
+        ValueAnimator overlayAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), overlayInvisible, overlayVisible);
+        overlayAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            private ColorDrawable mColorDrawable;
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mColorDrawable = new ColorDrawable((Integer)animation.getAnimatedValue());
+                mOverlay.setBackground(mColorDrawable);
+            }
+        });
+
+        final Float initAlpha = 0f;
+        final Float finalAlpha = 100f;
+
+        AlphaAnimation alphaAnimation = new AlphaAnimation(initAlpha, finalAlpha);
+        alphaAnimation.setDuration(2000);
+
+
         buttonAnimation.start();
+        mOverlay.setVisibility(View.VISIBLE);
+        mRoutinesMenuContainer.setVisibility(View.VISIBLE);
+        mExercisesMenuContainer.setVisibility(View.VISIBLE);
+        mExercisesMenuContainer.startAnimation(alphaAnimation);
+        mRoutinesMenuContainer.startAnimation(alphaAnimation);
+        overlayAnimation.start();
 
-        XmlPullParser parser = getResources().getLayout(R.layout.fab_expanded);
-        AttributeSet attributes = Xml.asAttributeSet(parser);
-
-        FloatingActionButton exerciseButton = new FloatingActionButton(mContext, attributes);
-        FloatingActionButton routineButton = new FloatingActionButton(mContext, attributes);
-
-        //exerciseButton.setLayoutParams;
-
-        //mContainer.addView(exerciseButton);
-        //mContainer.addView(routineButton);
 
 
     }
@@ -278,17 +334,44 @@ public class MainActivity extends ActionBarActivity {
             public void onAnimationUpdate(ValueAnimator animator) {
 
                 if (currentapiVersion >= Build.VERSION_CODES.JELLY_BEAN) {
-                    mMainButton.setBackground(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.pressed)));
-                }
-                else{
-                    mMainButton.setBackgroundDrawable(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.pressed)));
+                    mMainButton.setBackground(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.pressed),
+                            getResources().getColor(R.color.ripple)));
+                } else {
+                    mMainButton.setBackgroundDrawable(mMainButton.getRoundedDrawable((Integer) animator.getAnimatedValue(), getResources().getColor(R.color.pressed),
+                            getResources().getColor(R.color.ripple)));
                 }
 
             }
         });
-        buttonAnimation.start();
-    }
 
+        final Integer overlayVisible = getResources().getColor(R.color.overlay_visible);
+        final Integer overlayInvisible = getResources().getColor(R.color.overlay_invisible);
+
+        ValueAnimator overlayAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), overlayVisible, overlayInvisible);
+        overlayAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            private ColorDrawable mColorDrawable;
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mColorDrawable = new ColorDrawable((Integer)animation.getAnimatedValue());
+                mOverlay.setBackground(mColorDrawable);
+            }
+        });
+
+        final Float finalAlpha = 0f;
+        final Float initAlpha = 100f;
+
+        AlphaAnimation alphaAnimation = new AlphaAnimation(initAlpha, finalAlpha);
+
+        mRoutinesMenuContainer.startAnimation(alphaAnimation);
+        mExercisesMenuContainer.startAnimation(alphaAnimation);
+        mExercisesMenuContainer.setVisibility(View.GONE);
+        mRoutinesMenuContainer.setVisibility(View.GONE);
+        overlayAnimation.start();
+        buttonAnimation.start();
+
+    }
 
     private void toggleDrawer(){
         if (isStart){
@@ -370,7 +453,17 @@ public class MainActivity extends ActionBarActivity {
         transaction.replace(mFragmentLayout.getId(), mPlaceHolderFragment);
         transaction.commit();
         mCurrentPosition = position;
+    }
 
+    @Override
+    public void onResume(){
+        Log.d(TAG, "onResume");
+        super.onResume();
+        Intent intent = getIntent();
+        Boolean start = intent.getBooleanExtra("start", false);
+        if(start){
+            mMainButton.performClick();
+        }
     }
 
     @Override

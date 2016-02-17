@@ -69,10 +69,11 @@ public class FloatingActionButton extends ImageButton {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FloatingActionButton);
         mShadowSize = getResources().getDimensionPixelSize(R.dimen.fab_shadow_size);
         try{
-            mColorNormal = a.getColor(R.styleable.FloatingActionButton_colorNormal, R.color.grey_white_1000);
-            mColorPressed = a.getColor(R.styleable.FloatingActionButton_colorPressed, R.color.grey_white_1000);
-            mColorRipple = a.getColor(R.styleable.FloatingActionButton_colorRipple, R.color.grey_white_1000);
+            mColorNormal = a.getColor(R.styleable.FloatingActionButton_colorNormal, getResources().getColor(R.color.grey_white_1000));
+            mColorPressed = a.getColor(R.styleable.FloatingActionButton_colorPressed, getResources().getColor(R.color.grey_white_1000));
+            mColorRipple = a.getColor(R.styleable.FloatingActionButton_colorRipple, getResources().getColor(R.color.grey_white_1000));
             mType = a.getInt(R.styleable.FloatingActionButton_type, TYPE_NORMAL);
+
         } finally {
             a.recycle();
         }
@@ -112,7 +113,7 @@ public class FloatingActionButton extends ImageButton {
 
     @SuppressWarnings("deprecation")
     @TargetApi(21)
-    public Drawable getRoundedDrawable(int colorNormal, int colorPressed){
+    public Drawable getRoundedDrawable(int colorNormal, int colorPressed, int colorRipple){
         StateListDrawable drawable = new StateListDrawable();
         drawable.addState(new int[]{android.R.attr.state_pressed}, createDrawable(colorPressed));
         drawable.addState(new int[]{}, createDrawable(colorNormal));
@@ -127,7 +128,7 @@ public class FloatingActionButton extends ImageButton {
             });
 
             mRippleDrawable = new RippleDrawable(new ColorStateList(new int[][]{{}},
-                    new int[]{mColorRipple}), drawable, null);
+                    new int[]{colorRipple}), drawable, null);
             setClipToOutline(true);
             return mRippleDrawable;
         }
@@ -202,5 +203,13 @@ public class FloatingActionButton extends ImageButton {
             }
         }
     }
+
+    public float getCenterX(){
+        return this.getX() + this.getWidth()/2;
+    }
+    public float getCenterY(){
+        return this.getY() + this.getHeight()/2;
+    }
+
 
 }
